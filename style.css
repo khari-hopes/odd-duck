@@ -1,9 +1,10 @@
-.images {
+.image-container {
   border: black solid 3px;
-  height: 200px;
+  height: auto;
   width: 750px;
   margin: 0 auto;
 }
+
 .headertitle {
   text-align: center;
 }
