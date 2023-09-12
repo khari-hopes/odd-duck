@@ -1,0 +1,13 @@
+.images {
+  border: black solid 3px;
+  height: 200px;
+  width: 750px;
+  margin: 0 auto;
+}
+.headertitle {
+  text-align: center;
+}
+
+img {
+  width: 250px;
+}
