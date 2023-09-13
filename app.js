@@ -34,6 +34,7 @@ this.votes = 0;
 this.views = 0;
 }
 
+
 Product.prototype.render = function () {
 const imgElm = document.createElement("img");
 imgElm.src = this.filePath;
@@ -81,10 +82,24 @@ getRandomImg();
 
 imgVariable.imageContainer.addEventListener("click", handleClickImg);
 
-
-
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
 }
+
+function showResults(){
+  imgVariable.resultsContainer.innerHTML = "";
+  
+  for (let i = 0; i < imgVariable.imgArray.length; i++) {
+    const product = imgVariable.imgArray[i];
+    
+    
+    const resultParagraph = document.createElement("p");
+    resultParagraph.textContent = `${product.productName} had ${product.votes} votes and was seen ${product.views} times.`;
+    
+    
+    imgVariable.resultsContainer.appendChild(resultParagraph);
+  }
+
+};
