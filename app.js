@@ -22,50 +22,53 @@ const imgVariable = {
   new Product("water-can", "img/water-can.jpg"),
   new Product("wine-glass", "img/wine-glass.jpg"),
 ],
-imageContainer: document.getElementById("images"), 
-resultsContainer: document.getElementById("results"), 
-buttonContainer: document.getElementById("button"),
+  imageContainer: document.getElementById("images"),
+  resultsContainer: document.getElementById("results"),
+  buttonContainer: document.getElementById("button"),
+  previouslyShownProduct: [],
+  currentlyShownProduct: [],
 };
 
 function Product(productName, filePath) {
   this.productName = productName;
-this.filePath = filePath;
-this.votes = 0;
-this.views = 0;
+  this.filePath = filePath;
+  this.votes = 0;
+  this.views = 0;
 }
-
 
 Product.prototype.render = function () {
-const imgElm = document.createElement("img");
-imgElm.src = this.filePath;
-imgElm.alt = this.productName;
-imgVariable.imageContainer.appendChild(imgElm);
+  const imgElm = document.createElement("img");
+  imgElm.src = this.filePath;
+  imgElm.alt = this.productName;
+  imgVariable.imageContainer.appendChild(imgElm);
 };
 
+
+
 function getRandomImg() {
-imgVariable.imageContainer.innerHTML = null;
+  imgVariable.imageContainer.innerHTML = '';
 
-let newArray = [];
+  imgVariable.previouslyShownProduct = imgVariable.currentlyShownProduct;
+  imgVariable.currentlyShownProduct = [];
 
-for (let i = 0; i < 3; i++) {
-  let randNum = Math.floor(Math.random() * imgVariable.imgArray.length);
-  let randomImg = imgVariable.imgArray[randNum];
-  
-  while (newArray.includes(randomImg)) {
-    randNum = Math.floor(Math.random() * imgVariable.imgArray.length);
-    randomImg = imgVariable.imgArray[randNum];
+  while (imgVariable.currentlyShownProduct.length < 3) {
+    const randomInt = getRandomInt(0, imgVariable.imgArray.length);
+    const randomProduct = imgVariable.imgArray[randomInt];
+    if (
+      !imgVariable.currentlyShownProduct.includes(randomProduct) &&
+      !imgVariable.previouslyShownProduct.includes(randomProduct)
+    ) {
+      imgVariable.currentlyShownProduct.push(randomProduct);
+    }
   }
 
-  randomImg.views++;
-  randomImg.render();
-  newArray.push(randomImg);
-}
-
-return newArray;
+  for (let i = 0; i < imgVariable.currentlyShownProduct.length; i++) {
+    imgVariable.currentlyShownProduct[i].views++;
+    imgVariable.currentlyShownProduct[i].render();
+  }
 }
 
 const randomImages = getRandomImg();
-console.log(randomImages);
 
 function handleClickImg(event) {
 event.preventDefault();
@@ -79,6 +82,7 @@ for (let i = 0; i < imgVariable.imgArray.length; i++) {
 
 getRandomImg();
 }
+
 
 imgVariable.imageContainer.addEventListener("click", handleClickImg);
 
