@@ -24,20 +24,21 @@ const imgVariable = {
 ],
   imageContainer: document.getElementById("images"),
   resultsContainer: document.getElementById("results"),
-  myChart: null,
   previouslyShownProduct: [],
   currentlyShownProduct: [],
 };
 
+
 imgVariable.imageContainer.addEventListener("click", handleClickProduct);
 
-function Product(productName, filePath) {
+function Product(productName, filePath, views, votes) {
   this.productName = productName;
   this.filePath = filePath;
   this.lastClicked = null;
   this.votes = 0;
   this.views = 0;
 }
+ let myChart = null;
 
 Product.prototype.render = function () {
   const imgElm = document.createElement("img");
@@ -71,27 +72,32 @@ function getRandomImg() {
   }
 }
 
+
 getRandomImg();
 
 function handleClickProduct(event) {
   event.preventDefault();
-
   const target = event.target.alt;
 
   for (let i = 0; i < imgVariable.products.length; i++) {
     if (target === imgVariable.products[i].productName) {
       imgVariable.products[i].votes++;
+      imgVariable.products[i].views++;
     }
   }
-
+  if (imgVariable.currentlyShownProduct[0].views >= 6) {
+    renderChart();
+    renderResults();
+  }
   getRandomImg();
-  renderResults();
+
 }
+
+getLocalStorage();
 
 
   function renderResults() {
     imgVariable.resultsContainer.innerHTML = "";
-    renderChart();
     const resultsElm = document.createElement("ul");
 
     for (let i = 0; i < imgVariable.products.length; i++) {
@@ -124,9 +130,9 @@ function handleClickProduct(event) {
       console.log("Views:", views);
     }
   
-    if (imgVariable.myChart) {
-      imgVariable.myChart.clear();
-      imgVariable.myChart.destroy();
+    if ( myChart) {
+      myChart.clear();
+      myChart.destroy();
     }
   
     imgVariable.myChart = new Chart(ctx, {
@@ -160,4 +166,30 @@ function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
+}
+
+function setLocalStorage() {
+  localStorage.setItem("imgVariable", JSON.stringify(imgVariable));
+}
+
+function getLocalStorage() {
+  if (localStorage.imgVariable) {
+    const storedData = JSON.parse(localStorage.imgVariable);
+
+    for (let i = 0; i < storedData.products.length; i++) {
+      const product = storedData.products[i];
+      const newProduct = new Product(
+        product.productName, 
+        product.filePath, 
+        product.views, 
+        product.votes
+      );
+
+      imgVariable.products.push(newProduct);
+    }
+  } else {
+    for(let i = 0; i < imgVariable.products.length; i++){
+      imgVariable.products.push(imgVariable.products[i]);
+    }
+  }
 }
